@@ -8,7 +8,7 @@ function TaskProvider({ children }) {
 
   function addTask(name) {
     if (!name.trim()) return;
-    setTasks([...tasks, { id: crypto.randomUUID(), name: name.trim(), completed: false }]);
+    setTasks([...tasks, { id: 'todo-' + Math.random(), name: name.trim(), completed: false }]);
   }
 
   function toggleTaskCompleted(id) {
