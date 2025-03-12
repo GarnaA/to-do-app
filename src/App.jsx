@@ -1,35 +1,73 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import TaskItem from "./components/TaskItem";
+import TaskInputForm from "./components/TaskInputForm";
+import { useState, useRef, useEffect } from "react";
+import { nanoid } from "nanoid";
+import usePrevious from "./usePrevious";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tasks, setTasks] = useState([]);
+  const listHeadingRef = useRef(null);
+
+  function toggleTaskCompleted(id) {
+    const updatedTasks = tasks.map((task) => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
+  }
+
+  function deleteTask(id) {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+  }
+
+  function editTask(id, newName) {
+    const updatedTasks = tasks.map((task) => 
+      task.id === id ? { ...task, name: newName } : task
+    );
+    setTasks(updatedTasks);
+  }
+
+  function addTask(name) {
+    const newTask = { id: `todo-${nanoid()}`, name, completed: false };
+    setTasks([...tasks, newTask]);
+  }
+
+  const incompleteTasksCount = tasks.filter((task) => !task.completed).length;
+  const tasksNoun = incompleteTasksCount !== 1 ? "tasks" : "task";
+  const headingText = `${incompleteTasksCount} ${tasksNoun} remaining`;
+
+  const taskList = tasks.map((task) => (
+    <TaskItem
+      id={task.id}
+      name={task.name}
+      completed={task.completed}
+      key={task.id}
+      toggleTaskCompleted={toggleTaskCompleted}
+      deleteTask={deleteTask}
+      editTask={editTask}
+    />
+  ));
+
+  const prevTaskLength = usePrevious(tasks.length);
+
+  useEffect(() => {
+    if (tasks.length < prevTaskLength) {
+      listHeadingRef.current?.focus();
+    }
+  }, [tasks.length, prevTaskLength]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>To-do</h1>
+      <TaskInputForm addTask={addTask} />
+      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>
+        {headingText}
+      </h2>
+      <ul role="list" aria-labelledby="list-heading">
+        {taskList}
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default App;
