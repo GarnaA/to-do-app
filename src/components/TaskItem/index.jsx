@@ -40,44 +40,61 @@ function TaskItem({ id, name, completed }) {
 
   const editingTemplate = (
     <form onSubmit={handleSubmit}>
-      <div>
-        <input
-          id={id}
-          type="text"
-          onChange={handleChange}
-          value={newName}
-          ref={editFieldRef}
-        />
-      </div>
-      <div>
-        <button type="button" onClick={handleCancel}>
-          Cancel
-        </button>
-        <button type="submit">
-          Save
-        </button>
+      <div className="flex gap-30">
+        <div className="flex gap-2 items-center justify-center items-center pt-5">
+          <input
+            className="text-black text-2xl w-30"
+            id={id}
+            type="text"
+            onChange={handleChange}
+            value={newName}
+            ref={editFieldRef}
+          />
+        </div>
+        <div className="flex gap-2 items-center justify-center items-center pt-2">
+          <button 
+            className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+            type="button" 
+            onClick={handleCancel}>
+            Cancel
+          </button>
+          <button 
+            className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+            type="submit">
+            Save
+          </button>
+        </div>
       </div>
     </form>
   );
 
-const viewTemplate = (
-    <div>
-      <div>
+  const viewTemplate = (
+    <div className="flex gap-40">
+      <div className="flex gap-2 items-center justify-center items-center pt-5">
         <input
           id={id}
           type="checkbox"
           checked={completed}
           onChange={() => toggleTaskCompleted(id)}
+          className="w-6 h-6"
         />
-        <label htmlFor={id}>
+        <label
+          className="text-black text-2xl text-center" 
+          htmlFor={id}>
           {name}
         </label>
       </div>
-      <div>
-        <button type="button" onClick={() => setEditing(true)} ref={editButtonRef}>
+      <div className="flex gap-2 items-center justify-center items-center pt-2">
+        <button 
+          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+          type="button" 
+          onClick={() => setEditing(true)} ref={editButtonRef}>
           Edit
         </button>
-        <button type="button" onClick={() => deleteTask(id)}>
+        <button 
+          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+          type="button" 
+          onClick={() => deleteTask(id)}>
           Delete
         </button>
       </div>
