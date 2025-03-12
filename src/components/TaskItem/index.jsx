@@ -1,13 +1,17 @@
-import T from 'prop-types';
-import { useEffect, useState, useRef } from 'react';
-import usePrevious from '../../usePrevious.jsx';
+  import T from 'prop-types';
+  import { useEffect, useState, useRef } from 'react';
+  import usePrevious from '../../usePrevious.jsx';
+  import { useTasks } from '../../context/useTasks.js';
 
-function TaskItem({ id, name, completed, toggleTaskCompleted, deleteTask, editTask }) {
+  
+function TaskItem({ id, name, completed }) {
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState(name);
   const editFieldRef = useRef(null);
   const editButtonRef = useRef(null);
   const wasEditing = usePrevious(isEditing);
+
+  const { toggleTaskCompleted, deleteTask, editTask } = useTasks();
 
   useEffect(() => {
     if (!wasEditing && isEditing) {
@@ -56,7 +60,7 @@ function TaskItem({ id, name, completed, toggleTaskCompleted, deleteTask, editTa
     </form>
   );
 
-  const viewTemplate = (
+const viewTemplate = (
     <div>
       <div>
         <input
@@ -87,9 +91,6 @@ TaskItem.propTypes = {
   id: T.string.isRequired,
   name: T.string.isRequired,
   completed: T.bool.isRequired,
-  toggleTaskCompleted: T.func.isRequired,
-  deleteTask: T.func.isRequired,
-  editTask: T.func.isRequired,
 };
 
 export default TaskItem;

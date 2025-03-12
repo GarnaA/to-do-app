@@ -1,15 +1,15 @@
-import T from "prop-types";
-import {useState} from "react"
+import { useState } from "react";
+import { useTasks } from "../../context/useTasks";
 
-function TaskInput(props) {
+function TaskInput() {
   const [name, setName] = useState("");
+  const { addTask } = useTasks();
 
   function handleSubmit(event) {
-    event.preventDefault()
-
-    if(name !== "") {
-      props.addTask(name);
-      setName("")
+    event.preventDefault();
+    if (name.trim() !== "") {
+      addTask(name);
+      setName("");
     }
   }
 
@@ -31,11 +31,7 @@ function TaskInput(props) {
         Add
       </button>
     </form>
-  )
-}
-
-TaskInput.propTypes = {
-  addTask: T.func.isRequired,
+  );
 }
 
 export default TaskInput;
