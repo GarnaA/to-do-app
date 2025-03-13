@@ -6,11 +6,18 @@ import { useTasks } from '../../context/useTasks.js';
 function TaskItem({ id, name, completed }) {
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState(name);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const editFieldRef = useRef(null);
   const editButtonRef = useRef(null);
   const wasEditing = usePrevious(isEditing);
 
   const { toggleTaskCompleted, deleteTask, editTask } = useTasks();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setIsVisible(true), 10);
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     if (!wasEditing && isEditing) {
@@ -37,11 +44,16 @@ function TaskItem({ id, name, completed }) {
     setEditing(false);
   }
 
+  function handleDelete() {
+    setIsDeleting(true);
+    setTimeout(() => deleteTask(id), 300);
+  }
+
   const editingTemplate = (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex justify-between items-center w-full gap-4 p-4 rounded-lg">
+      <div className="flex justify-between items-center w-full gap-4 p-4 transform transition-all duration-300 scale-98 shadow-lg">
         <input
-          className="text-black text-2xl w-full p-2 border-2 border-gray-400 rounded-lg"
+          className="text-black text-2xl w-full p-2"
           id={id}
           type="text"
           onChange={handleChange}
@@ -50,14 +62,14 @@ function TaskItem({ id, name, completed }) {
         />
         <div className="flex gap-2">
           <button
-            className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-all duration-200 ease-in hover:scale-99 hover:-translate-y-1"
             type="button"
             onClick={handleCancel}
           >
             Cancel
           </button>
           <button
-            className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-all duration-200 ease-in hover:scale-99 hover:-translate-y-1"
             type="submit"
           >
             Save
@@ -68,7 +80,10 @@ function TaskItem({ id, name, completed }) {
   );
 
   const viewTemplate = (
-    <div className="flex justify-between items-center w-full gap-4 p-4 rounded-lg">
+    <div className={`flex justify-between items-center w-full gap-4 p-4 rounded-lg transform transition-all duration-300 ${
+      isDeleting ? 'opacity-0 scale-90 translate-x-4' :
+      isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+    }`}>
       <div className="flex items-center gap-2">
         <input
           id={id}
@@ -77,13 +92,14 @@ function TaskItem({ id, name, completed }) {
           onChange={() => toggleTaskCompleted(id)}
           className="w-6 h-6"
         />
-        <label className="text-black text-2xl" htmlFor={id}>
+        <label className={`text-2xl transition-all duration-300 ${completed ? 'line-through text-gray-400 scale-95' : 'text-black scale-100'}`} htmlFor={id}>
           {name}
         </label>
       </div>
+
       <div className="flex gap-2">
         <button
-          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-all duration-200 ease-in hover:scale-99 hover:-translate-y-1"
           type="button"
           onClick={() => setEditing(true)}
           ref={editButtonRef}
@@ -91,9 +107,9 @@ function TaskItem({ id, name, completed }) {
           Edit
         </button>
         <button
-          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
+          className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-all duration-200 ease-in hover:scale-99 hover:-translate-y-1"
           type="button"
-          onClick={() => deleteTask(id)}
+          onClick={handleDelete}
         >
           Delete
         </button>
