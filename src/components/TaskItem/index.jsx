@@ -1,9 +1,8 @@
-  import T from 'prop-types';
-  import { useEffect, useState, useRef } from 'react';
-  import usePrevious from '../../usePrevious.jsx';
-  import { useTasks } from '../../context/useTasks.js';
+import T from 'prop-types';
+import { useEffect, useState, useRef } from 'react';
+import usePrevious from '../../usePrevious.jsx';
+import { useTasks } from '../../context/useTasks.js';
 
-  
 function TaskItem({ id, name, completed }) {
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState(name);
@@ -39,28 +38,28 @@ function TaskItem({ id, name, completed }) {
   }
 
   const editingTemplate = (
-    <form onSubmit={handleSubmit}>
-      <div className="flex gap-30">
-        <div className="flex gap-2 items-center justify-center items-center pt-5">
-          <input
-            className="text-black text-2xl w-30"
-            id={id}
-            type="text"
-            onChange={handleChange}
-            value={newName}
-            ref={editFieldRef}
-          />
-        </div>
-        <div className="flex gap-2 items-center justify-center items-center pt-2">
-          <button 
+    <form onSubmit={handleSubmit} className="w-full">
+      <div className="flex justify-between items-center w-full gap-4 p-4 rounded-lg">
+        <input
+          className="text-black text-2xl w-full p-2 border-2 border-gray-400 rounded-lg"
+          id={id}
+          type="text"
+          onChange={handleChange}
+          value={newName}
+          ref={editFieldRef}
+        />
+        <div className="flex gap-2">
+          <button
             className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
-            type="button" 
-            onClick={handleCancel}>
+            type="button"
+            onClick={handleCancel}
+          >
             Cancel
           </button>
-          <button 
+          <button
             className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
-            type="submit">
+            type="submit"
+          >
             Save
           </button>
         </div>
@@ -69,8 +68,8 @@ function TaskItem({ id, name, completed }) {
   );
 
   const viewTemplate = (
-    <div className="flex gap-40">
-      <div className="flex gap-2 items-center justify-center items-center pt-5">
+    <div className="flex justify-between items-center w-full gap-4 p-4 rounded-lg">
+      <div className="flex items-center gap-2">
         <input
           id={id}
           type="checkbox"
@@ -78,30 +77,35 @@ function TaskItem({ id, name, completed }) {
           onChange={() => toggleTaskCompleted(id)}
           className="w-6 h-6"
         />
-        <label
-          className="text-black text-2xl text-center" 
-          htmlFor={id}>
+        <label className="text-black text-2xl" htmlFor={id}>
           {name}
         </label>
       </div>
-      <div className="flex gap-2 items-center justify-center items-center pt-2">
-        <button 
+      <div className="flex gap-2">
+        <button
           className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
-          type="button" 
-          onClick={() => setEditing(true)} ref={editButtonRef}>
+          type="button"
+          onClick={() => setEditing(true)}
+          ref={editButtonRef}
+        >
           Edit
         </button>
-        <button 
+        <button
           className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-colors"
-          type="button" 
-          onClick={() => deleteTask(id)}>
+          type="button"
+          onClick={() => deleteTask(id)}
+        >
           Delete
         </button>
       </div>
     </div>
   );
 
-  return <li>{isEditing ? editingTemplate : viewTemplate}</li>;
+  return (
+    <li className="w-full mb-4">
+      {isEditing ? editingTemplate : viewTemplate}
+    </li>
+  );
 }
 
 TaskItem.propTypes = {
