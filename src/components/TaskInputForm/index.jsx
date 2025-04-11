@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { useTasks } from "../../context/useTasks";
+import { useDispatch } from "react-redux";
+import { addTodo } from "../../redux/actions/todoActions";
 
 function TaskInput() {
   const [name, setName] = useState("");
-  const { addTask } = useTasks();
+  const dispatch = useDispatch();
 
   function handleSubmit(event) {
     event.preventDefault();
     if (name.trim() !== "") {
-      addTask(name);
+      dispatch(addTodo(name));
       setName("");
     }
   }
@@ -18,10 +19,7 @@ function TaskInput() {
   }
 
   return (
-    <form 
-      onSubmit={handleSubmit} 
-      className=" flex justify-center items-start pt-20"
-    >
+    <form onSubmit={handleSubmit} className="flex justify-center items-start pt-20">
       <div className="flex items-center gap-4">
         <input
           type="text"

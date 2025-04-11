@@ -1,7 +1,8 @@
 import T from 'prop-types';
-import { useEffect, useState, useRef } from 'react';
-import usePrevious from '../../usePrevious.jsx';
-import { useTasks } from '../../context/useTasks.js';
+import { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { toggleTodo, deleteTodo, editTodo } from '../../redux/actions/todoActions';
+import usePrevious from '../../usePrevious';
 
 function TaskItem({ id, name, completed }) {
   const [isEditing, setEditing] = useState(false);
@@ -11,13 +12,14 @@ function TaskItem({ id, name, completed }) {
   const editFieldRef = useRef(null);
   const editButtonRef = useRef(null);
   const wasEditing = usePrevious(isEditing);
-
-  const { toggleTaskCompleted, deleteTask, editTask } = useTasks();
+  const dispatch = useDispatch(); 
 
   useEffect(() => {
     const timeout = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timeout);
-  }, []);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [id, name, completed]);
 
   useEffect(() => {
     if (!wasEditing && isEditing) {
@@ -34,7 +36,7 @@ function TaskItem({ id, name, completed }) {
   function handleSubmit(event) {
     event.preventDefault();
     if (newName.trim() !== "") {
-      editTask(id, newName);
+      dispatch(editTodo(id, newName));
       setEditing(false);
     }
   }
@@ -46,7 +48,9 @@ function TaskItem({ id, name, completed }) {
 
   function handleDelete() {
     setIsDeleting(true);
-    setTimeout(() => deleteTask(id), 300);
+    setTimeout(() => {
+      dispatch(deleteTodo(id));
+    }, 300);
   }
 
   const editingTemplate = (
@@ -89,7 +93,9 @@ function TaskItem({ id, name, completed }) {
           id={id}
           type="checkbox"
           checked={completed}
-          onChange={() => toggleTaskCompleted(id)}
+          onChange={() => {
+            dispatch(toggleTodo(id));
+          }}
           className="w-6 h-6"
         />
         <label className={`text-2xl transition-all duration-300 ${completed ? 'line-through text-gray-400 scale-95' : 'text-black scale-100'}`} htmlFor={id}>
@@ -101,7 +107,9 @@ function TaskItem({ id, name, completed }) {
         <button
           className="bg-gray-500 text-white text-2xl px-4 py-2 rounded-lg hover:bg-violet-300 hover:text-black transition-all duration-200 ease-in hover:scale-99 hover:-translate-y-1"
           type="button"
-          onClick={() => setEditing(true)}
+          onClick={() => {
+            setEditing(true);
+          }}
           ref={editButtonRef}
         >
           Edit
